@@ -6,3 +6,5 @@ router.use("/api/user",userRoutes);
 
 const toolRoutes = require('./toolController');
 router.use("/api/tool",toolRoutes);
+
+module.exports = router;

@@ -16,11 +16,61 @@ router.get("/logout", (req,res) => {
     res.render("homepage")
 })
 
+// Get one user
+router.get("/:id", (req,res)=>{
+    User.findByPk(req.params.id)
+    .then(userData=>{
+        res.json(userData)
+    })
+    .catch(err=>{
+        console.log(err);
+        res.status(500).json({msg:"Error.",err})
+    })
+})
+
 // Create user route
-    TODO:
+router.post("/", (req,res)=>{
+    user.create({
+        email:req.body.email,
+        username:req.body.username,
+        password:req.body.password
+    })
+    .then(userData=>{
+        req.session.userId = userData.id;
+        req.session.username = userData.username;
+        res.json(userData)
+    })
+    .catch(err=>{
+        console.log(err);
+        res.status(500).json({msg:"Error.",err})
+    })
+})
 
 // Login user route
-    TODO:
+router.post("/login", (req,res)=>{
+    user.findOne({
+        where:{
+            username:req.body.username
+        }
+    })
+    .then(userData=>{
+        if(!userData){
+            res.status(401).json({msg:"Incorrect user information."})
+        } else {
+            if(bcrypt.compareSync(req.body.password,userData.password)){
+                req.session.userId = userData.id;
+                req.session.username = userData.username;
+                return res.json(userData)
+            } else {
+                res.status(401).json({msg:"Incorrect user information."})
+            }
+        }
+    })
+    .catch(err=>{
+        console.log(err);
+        res.status(500).json({msg:"Error.",err})
+    })
+})
 
 // Show user tools route
     TODO:
@@ -28,5 +78,8 @@ router.get("/logout", (req,res) => {
 // Show user arrangements
     TODO:
 
-// Delete tool route
+// Delete tool from user collection route
     TODO:
+
+
+module.exports = router;
