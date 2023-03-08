@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { user, tool, tooltype } = require('../models');
+const { user, tool, tooltype, toolType } = require('../models');
 const bcrypt = require('bcrypt');
 
 router.get("/login",(req,res) => {
-    res.redner("login")
+    res.render("login")
 })
 
 router.get("/signup",(req,res) => {
@@ -73,13 +73,41 @@ router.post("/login", (req,res)=>{
 })
 
 // Show user tools route
-    TODO:
+    TODO: //add path, 
+router.get("",(req,res)=>{
+    if(!req.session.userId){
+        return res.render("home")
+    };
+    tool.findAll({include:[toolType]},{
+        where: {ownerId:req.session.userId}
+    }).then(toolData=>{
+        const data = toolData.map(tool=>tool.toJSON());
+        res.render("mytools", {
+        userdate:data,
+        session:req.session})
+    }).catch(err=>{
+        console.log(err);
+        res.status(500).json({msg:"Erro.",err})
+    })
+})
 
 // Show user arrangements
     TODO:
 
 // Delete tool from user collection route
-    TODO:
+    TODO: // add path
+router.delete("",(req,res)=>{
+    tool.destroy({
+        where:{
+            id:req.params.id
+        }
+    }).then(toolData=>{
+        res.json(toolData)
+    }).catch(err=>{
+        console.log(err);
+        res.status(500).json({msg:"Error.",err})
+    })
+})
 
 
 module.exports = router;
