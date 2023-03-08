@@ -21,6 +21,8 @@ tool.belongsTo(toolType,{
 
 toolType.hasmany(tool)
 
+TODO: // add share history
+
 module.exports = {
     user,
     tool,
