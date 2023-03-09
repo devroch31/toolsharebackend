@@ -1,10 +1,10 @@
-const { Model, Datatypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 
-class toolType extends Model {}
+class Type extends Model {}
 
-toolType.init({
-    toolTypename:{
+Type.init({
+    Name:{
         type: DataTypes.STRING,
         allowNull:false,
         validate:{
@@ -15,4 +15,4 @@ toolType.init({
     sequelize,
 });
 
-module.exports=toolType
+module.exports= Type;

@@ -1,8 +1,9 @@
-const user = require("./user");
-const tool = require("./tool");
-const toolType = require("./toolType");
+const User = require("./user");
+const Tool = require("./tool");
+const Type = require("./type");
+const Share = require("./share");
 
-tool.belongsTo(user,{
+Tool.belongsTo(User,{
     onDelete:"CASCADE",
     as:'owner',
     foreignKey: {
@@ -10,21 +11,33 @@ tool.belongsTo(user,{
     }
 });
 
-tool.belongsTo(user, {
+Tool.belongsTo(User, {
     onDelete:"CASCADE",
     as:'borrower'
 });
 
-tool.belongsTo(toolType,{
+Tool.belongsTo(Type,{
     onDelete:"CASCADE"
 });
 
-toolType.hasmany(tool)
+Type.hasmany(Tool)
 
-TODO: // add share history
+User.belongsTo(Share,{
+    onDelete:"CASCADE",
+    as:'lender',
+    foreignKey: {
+        allowNull: false
+    }
+});
+
+User.belongsTo(Share, {
+    onDelete:"CASCADE",
+    as:'borrower'
+});
 
 module.exports = {
-    user,
-    tool,
-    toolType
+    User,
+    Tool,
+    Type,
+    Share
 }

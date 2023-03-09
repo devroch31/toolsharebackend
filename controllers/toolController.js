@@ -27,7 +27,7 @@ router.post("/",(req,res)=>{
 
 // Show available tools
 router.get("/tool/:id", (req, res) => {
-    book.findAll({
+    tool.findAll({
         include: [
             {
             model: user,

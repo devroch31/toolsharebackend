@@ -1,113 +1,114 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { user, tool, tooltype, toolType } = require('../models');
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const { User, Tool, Tooltype, } = require("../models");
+const jwt = require("jsonwebtoken");
 
-router.get("/login",(req,res) => {
-    res.render("login")
-})
-
-router.get("/signup",(req,res) => {
-    res.render("signup")
-})
-
-router.get("/logout", (req,res) => {
-    req.session.destroy();
-    res.render("homepage")
-})
-
-// Get one user
-router.get("/:id", (req,res)=>{
-    User.findByPk(req.params.id)
-    .then(userData=>{
-        res.json(userData)
+// Signup user 
+router.post("/", (req, res) => {
+    User.create({
+        email: req.body.email,
+        username: req.body.username,
+        password: req.body.password,
     })
-    .catch(err=>{
-        console.log(err);
-        res.status(500).json({msg:"Error.",err})
-    })
-})
-
-// Create user route
-router.post("/", (req,res)=>{
-    user.create({
-        email:req.body.email,
-        username:req.body.username,
-        password:req.body.password
-    })
-    .then(userData=>{
-        req.session.userId = userData.id;
-        req.session.username = userData.username;
-        res.json(userData)
-    })
-    .catch(err=>{
-        console.log(err);
-        res.status(500).json({msg:"Error.",err})
-    })
-})
-
-// Login user route
-router.post("/login", (req,res)=>{
-    user.findOne({
-        where:{
-            username:req.body.username
-        }
-    })
-    .then(userData=>{
-        if(!userData){
-            res.status(401).json({msg:"Incorrect user information."})
-        } else {
-            if(bcrypt.compareSync(req.body.password,userData.password)){
-                req.session.userId = userData.id;
-                req.session.username = userData.username;
-                return res.json(userData)
-            } else {
-                res.status(401).json({msg:"Incorrect user information."})
+    .then((newUser) => {
+        const token = jwt.sign(
+            {
+                username: newUser.username,
+                id: newUser.id,
+            },
+            process.env.JWT_SECRET,
+            {
+                expireIn: "12hr",
             }
-        }
+        );
+        res.json({
+            token,
+            user: newUser,
+        });
     })
-    .catch(err=>{
+    .catch((err) => {
         console.log(err);
-        res.status(500).json({msg:"Error.",err})
-    })
-})
+        res.json({ msg:"Error.", err })
+    });
+});
 
-// Show user tools route
-    TODO: //add path, 
-router.get("",(req,res)=>{
-    if(!req.session.userId){
-        return res.render("home")
-    };
-    tool.findAll({include:[toolType]},{
-        where: {ownerId:req.session.userId}
-    }).then(toolData=>{
-        const data = toolData.map(tool=>tool.toJSON());
-        res.render("mytools", {
-        userdate:data,
-        session:req.session})
-    }).catch(err=>{
-        console.log(err);
-        res.status(500).json({msg:"Erro.",err})
-    })
-})
-
-// Show user arrangements
-    TODO:
-
-// Delete tool from user collection route
-    TODO: // add path
-router.delete("",(req,res)=>{
-    tool.destroy({
+// Login User
+router.post("/login", (req, res) => {
+    User.findOne({
         where:{
-            id:req.params.id
-        }
-    }).then(toolData=>{
-        res.json(toolData)
-    }).catch(err=>{
-        console.log(err);
-        res.status(500).json({msg:"Error.",err})
+            email: req.body.email,
+        },
     })
-})
+    .then((userData) => {
+        if(!userData) {
+            return res.status(401).json({ msg: "Incorrect user information." });
+        }
+        if (!bcrypt.compareSync(req.body.password, userData.password)) {
+            return res.status(401).json({ msg: "Incorrect user information." });
+        }
+        const token = jwt.sign(
+            {
+                username: userData.username,
+                id: userData.id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "12h",
+            }
+        );
+        res.json({
+            token,
+            user: userData,
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status({ msg: "Error.", err })
+    });
+});
+ 
+router.get("/isValidToken", (req, res) => {
+    const token = req.headers?.authorization?.split(" ")[1];
+    if(!token) {
+        return res.status(403).json({ isValid: false, msg: "Please login to request a tool!"});
+    }
+    try {
+        const tokenData = jwt.verify(token, process.env.JWT_SECRET);
+        res.json({ isValid: true, user: tokenData,});
+    } catch (err) {
+        console.log(err);
+        res.status(403).json({ isValid: false, msg: "Invalid Token.", });
+    }
+});
+
+// Get user with their shares.
+router.get("/:id", (req, res) => {
+    User.findByPk(req.params.id, {
+        include: [Share],
+    })
+    .then(userData=>{
+        res.json(userData)
+    })
+    .catch((err) => {
+        console.log(err);
+        res.json({ msg: "Error.", err });
+    });
+});
+
+// TODO: delete tool from user profile
+// router.delete("/:id", (req, res) => {
+//     tool.destroy({
+//         where:{
+//             id:req.params.id
+//         }
+//     }).then(toolData=>{
+//         res.json(toolData)
+//     }).catch(err=>{
+//         console.log(err);
+//         res.status(500).json({msg:"Error.",err})
+//     })
+// })
 
 
 module.exports = router;

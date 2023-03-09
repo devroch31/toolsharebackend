@@ -2,12 +2,13 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 const bcrypt = require('bcrypt')
 
-class user extends Model {}
+class User extends Model {}
 
-user.init({
+User.init({
     username:{
         type: DataTypes.STRING,
         allowNull:false,
+        unique:true
     },
     email: {
          type: DataTypes.STRING,
@@ -34,4 +35,4 @@ user.init({
     }
 });
 
-module.exports=user
+module.exports= User;
