@@ -3,55 +3,43 @@ const { User, Type } = require('../models');
 
 const users = [
     {
-        username:"",
-        email:"",
-        password:""
+        username:"evan",
+        email:"evan@evan.com",
+        password:"evanpassword"
     },
     {
-        username:"",
-        email:"",
-        password:""
-    },
-    {
-        username:"",
-        email:"",
-        password:""
-    },
+        username:"andrew",
+        email:"andrew@andrew.com",
+        password:"andrewpassword"
+    }
 ];
 
 const types = [
     {
-        categoryname:""
+        categoryname:"Saw"
     },
     {
-        categoryname:""
+        categoryname:"Drill"
     },
     {
-        categoryname:""
-    },
-    {
-        categoryname:""
-    }, 
-    {
-        categoryname:""
-    },
+        categoryname:"Sander"
+    }
 ];
 
 const shares = [
     {
-        date: "",
-        notes: "",
-        UserId:
+        date: new Data(),
+        notes: 'text aobut tool',
+        borrowed_by: '1',
+        tool_id: "1",
+        owner_id: "2"
     },
     {
-        date: "",
-        notes: "",
-        UserId:
-    },
-    {
-        date: "",
-        notes: "",
-        UserId:
+        date: new Data(),
+        notes: "text aobut tool",
+        borrowed_by: '2',
+        tool_id: "2",
+        owner_id: "1"
     },
 ];
 
@@ -60,6 +48,7 @@ const seed = async () => {
     const seededUsers = await User.bulkCreate(users, {
       individualHooks: true,
     });
+    const seededTypes = await Type.bulkCreate(types);
     const seededShares = await Share.bulkCreate(shares);
     process.exit(0);
   };
