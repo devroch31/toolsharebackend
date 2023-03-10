@@ -15,9 +15,9 @@ router.get("/", (req, res) => {
         console.log(err);
         res.status(500).json({ msg: "Error.", err });
       });
-  });
+});
 
-// Create share request. TODO: Figure out how to include tool.
+// Create share request.
 router.post("/", (req, res) => {
     const token = req.headers?.authorization?.split(" ")[1];
     if (!token) {
@@ -28,7 +28,9 @@ router.post("/", (req, res) => {
       Share.create({
         date: req.body.date,
         notes: req.body.notes,
-        UserId: tokenData.id,
+        borrowed_by: tokenData.id,
+        toolId: req.body.toolId,
+        ownerId: req.body.ownerId
       })
         .then((newShare) => {
             res.json(newShare);

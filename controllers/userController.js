@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const { User, Tool, Tooltype, } = require("../models");
+const { User, Tool, Type, } = require("../models");
 const jwt = require("jsonwebtoken");
 
 // Signup user 
@@ -96,19 +96,18 @@ router.get("/:id", (req, res) => {
     });
 });
 
-// TODO: delete tool from user profile
-// router.delete("/:id", (req, res) => {
-//     tool.destroy({
-//         where:{
-//             id:req.params.id
-//         }
-//     }).then(toolData=>{
-//         res.json(toolData)
-//     }).catch(err=>{
-//         console.log(err);
-//         res.status(500).json({msg:"Error.",err})
-//     })
-// })
-
+// Get user with their tools.
+router.get("/:id", (req, res) => {
+    User.findByPk(req.params.id, {
+        include: [Tool],
+    })
+    .then(userData=>{
+        res.json(userData)
+    })
+    .catch((err) => {
+        console.log(err);
+        res.json({ msg: "Error.", err });
+    });
+});
 
 module.exports = router;
