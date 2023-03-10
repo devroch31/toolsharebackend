@@ -29,8 +29,8 @@ router.post("/", (req, res) => {
         date: req.body.date,
         notes: req.body.notes,
         borrowed_by: tokenData.id,
-        toolId: req.body.toolId,
-        ownerId: req.body.ownerId
+        tool_Id: req.body.toolId,
+        owner_Id: req.body.ownerId
       })
         .then((newShare) => {
             res.json(newShare);
