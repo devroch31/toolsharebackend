@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devroch31/toolsharebackend"
+    "url": "git+https://github.com/hermanea/tool-share-backend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/devroch31/toolsharebackend/issues"
+    "url": "https://github.com/hermanea/tool-share-backend/issues"
   },
-  "homepage": "https://github.com/devroch31/toolsharebackend#readme",
+  "homepage": "https://github.com/hermanea/tool-share-backend#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
